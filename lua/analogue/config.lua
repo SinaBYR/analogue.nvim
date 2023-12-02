@@ -1,7 +1,3 @@
--- TODO find resize event
--- TODO insert text into buffer
-
-
 local M = {}
 
 M.buf_opts = {
@@ -9,16 +5,16 @@ M.buf_opts = {
 }
 
 M.win_opts = {
-	title = 'Sina',
-	title_pos = 'center',
 	-- focusable = false,
+	-- title = 'Sina',
+	-- title_pos = 'center',
 	relative = 'editor', -- win, editor, cursor, mouse
 	style = 'minimal', -- removes row number
-	row = 10,
-	col = 80,
-	width = 20,
-	height = 10,
-	border = { "/", "-", "\\", "|" } -- { ';' } -- {"", "", "", ">", "", "", "", "<"} - { ';' } 
+	row = vim.o.lines - height,
+	col = vim.o.columns - width,
+	width = width,
+	height = height,
+	border = 'single', -- {'●'}, -- {"", "", "", ">", "", "", "", "<"} -- { "/", "-", "\\", "|" } -- { ';' } --  { ';' },
 }
 
 M.command_opts = {
