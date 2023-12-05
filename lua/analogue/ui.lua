@@ -26,10 +26,19 @@ local function get_template()
 		min_index = math.floor(aprox_index)
 	end
 
+	if min_index == 12 then
+		min_index = 0
+		if hour_index == 12 then
+			hour_index = 1
+		else
+			hour_index = hour_index + 1
+		end
+	end
+
 	return lookup[hour_index][min_index]
 end
 
-local function create_buffer(opts)
+function M.create_buffer(opts)
 	local buf_opts = opts or config.buf_opts
 	local buffer = a.nvim_create_buf(false, false)
 
@@ -40,7 +49,7 @@ local function create_buffer(opts)
 	return buffer
 end
 
-local function create_window(handle, opts)
+function M.create_window(handle, opts)
 	local win_opts = opts or config.win_opts
 	local win = a.nvim_open_win(handle, true, win_opts)
 
@@ -57,6 +66,10 @@ local function set_interval(buf)
 	end
 end
 
+local function close_window(win)
+	a.nvim_win_close(win, true)
+end
+
 function M.initialize_clock(opts)
 	local buf_opts = opts.buf_opts or config.buf_opts
 	local win_opts = opts.win_opts or config.win_opts
@@ -64,9 +77,8 @@ function M.initialize_clock(opts)
 	local buf = create_buffer(buf_opts)
 	local tempate = get_template()
 	set_template(buf, tempate)
-	set_interval(buf)
-
 	local window = create_window(buf, win_opts)
+	-- set_interval(buf)
 end
 
 return M
