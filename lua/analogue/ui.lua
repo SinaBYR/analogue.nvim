@@ -38,7 +38,7 @@ local function get_template()
 	return lookup[hour_index][min_index]
 end
 
-function M.create_buffer(opts)
+local function create_buffer(opts)
 	local buf_opts = opts or config.buf_opts
 	local buffer = a.nvim_create_buf(false, false)
 
@@ -49,21 +49,17 @@ function M.create_buffer(opts)
 	return buffer
 end
 
-function M.create_window(handle, opts)
+local function create_window(handle, opts)
 	local win_opts = opts or config.win_opts
 	local win = a.nvim_open_win(handle, true, win_opts)
 
 	return win
 end
 
-local function set_interval(buf)
-	local t = os.time()
-	while true do
-		if os.time() - t % 300 == 0 then
-			local template = get_template()
-			update_template(buf, template)
-		end
-	end
+local function set_schedule(buf)
+	local template = get_template()
+	update_template(buf, template)
+	vim.defer_fn(set_schedule, 3 * 60 * 1000) -- interval at 3 minutes
 end
 
 local function close_window(win)
@@ -75,10 +71,10 @@ function M.initialize_clock(opts)
 	local win_opts = opts.win_opts or config.win_opts
 
 	local buf = create_buffer(buf_opts)
-	local tempate = get_template()
-	set_template(buf, tempate)
+	set_schedule(buf)
+	-- local template = get_template()
+	-- set_template(buf, template)
 	local window = create_window(buf, win_opts)
-	-- set_interval(buf)
 end
 
 return M
