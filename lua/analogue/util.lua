@@ -11,5 +11,18 @@ function M.buffer_to_string()
 	return table.concat(content, "\n")
 end
 
+function M.set_interval(interval, callback)
+  local timer = vim.loop.new_timer()
+  timer:start(0, interval, function ()
+    callback()
+  end)
+  return timer
+end
+
+function M.clear_interval(timer)
+  timer:stop()
+  timer:close()
+end
+
 return M
 
