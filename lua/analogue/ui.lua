@@ -1,17 +1,9 @@
 local a = vim.api
 local config = require('analogue.config')
 local lookup = require('analogue.lookup').lookup
+local util = require('analogue.util')
 
 local M = {}
-
-local function set_template(buf, template)
-	a.nvim_buf_set_lines(buf, 0, -1, false, template)
-end
-
-local function update_template(buf, template)
-	a.nvim_buf_set_lines(buf, 0, -1, false, {})
-	a.nvim_buf_set_lines(buf, 0, -1, false, template)
-end
 
 local function get_template()
 	local hour_index = tonumber(os.date("%I"))
@@ -38,6 +30,12 @@ local function get_template()
 	return lookup[hour_index][min_index]
 end
 
+local function update_template(buf)
+	local template = get_template()
+	vim.schedule(function() a.nvim_buf_set_lines(buf, 0, -1, false, {}) end)
+	vim.schedule(function() a.nvim_buf_set_lines(buf, 0, -1, false, template) end)
+end
+
 local function create_buffer(opts)
 	local buf_opts = opts or config.buf_opts
 	local buffer = a.nvim_create_buf(false, false)
@@ -57,9 +55,7 @@ local function create_window(handle, opts)
 end
 
 local function set_schedule(buf)
-	local template = get_template()
-	update_template(buf, template)
-	vim.defer_fn(set_schedule, 3 * 60 * 1000) -- interval at 3 minutes
+	return util.set_interval(2.5 * 60 * 1000, function() update_template(buf) end)
 end
 
 local function close_window(win)
@@ -70,11 +66,10 @@ function M.initialize_clock(opts)
 	local buf_opts = opts.buf_opts or config.buf_opts
 	local win_opts = opts.win_opts or config.win_opts
 
-	local buf = create_buffer(buf_opts)
-	set_schedule(buf)
-	-- local template = get_template()
-	-- set_template(buf, template)
-	local window = create_window(buf, win_opts)
+	local buffer = create_buffer(buf_opts)
+	local window = create_window(buffer, win_opts)
+	local timer = set_schedule(buffer)
+	a.nvim_create_autocmd('WinClosed', { buffer = buffer, callback = function() timer:stop() end })
 end
 
 return M
