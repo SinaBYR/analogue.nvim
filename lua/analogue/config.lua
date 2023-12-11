@@ -1,11 +1,16 @@
 local M = {}
 
+local width = 16
+local height = 11
+
+M.constants = {
+	width = width,
+	height = height
+}
+
 M.buf_opts = {
 	buftype = 'nofile'
 }
-
-local width = 16
-local height = 11
 
 M.win_opts = {
 	-- focusable = false,

@@ -2,6 +2,7 @@ local a = vim.api
 local config = require('analogue.config')
 local lookup = require('analogue.lookup').lookup
 local util = require('analogue.util')
+local cmd = require('analogue.command')
 
 local M = {}
 
@@ -68,6 +69,7 @@ function M.initialize_clock(opts)
 
 	local buffer = create_buffer(buf_opts)
 	local window = create_window(buffer, win_opts)
+	cmd.register_commands(window)
 	local timer = set_schedule(buffer)
 	a.nvim_create_autocmd('WinClosed', { buffer = buffer, callback = function() timer:stop() end })
 end
