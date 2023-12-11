@@ -49,7 +49,7 @@ end
 
 local function create_window(handle, opts)
 	local win_opts = opts or config.win_opts
-	local win = a.nvim_open_win(handle, true, win_opts)
+	local win = a.nvim_open_win(handle, false, win_opts)
 
 	return win
 end
