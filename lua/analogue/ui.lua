@@ -5,6 +5,7 @@ local util = require('analogue.util')
 local cmd = require('analogue.command')
 
 local M = {}
+M._initial_opts = {}
 
 local function get_template()
 	local hour_index = tonumber(os.date("%I"))
@@ -59,19 +60,47 @@ local function set_schedule(buf)
 	return util.set_interval(2.5 * 60 * 1000, function() update_template(buf) end)
 end
 
-local function close_window(win)
-	a.nvim_win_close(win, true)
-end
-
 function M.initialize_clock(opts)
+	M._initial_opts = opts
 	local buf_opts = opts.buf_opts or config.buf_opts
 	local win_opts = opts.win_opts or config.win_opts
+	local auto_start = opts.auto_start
 
-	local buf = create_buffer(buf_opts)
-	local win = create_window(buf, win_opts)
-	local timer = set_schedule(buf)
-	cmd.register_commands({ win = win, timer = timer })
-	-- a.nvim_create_autocmd('WinClosed', { buffer = buffer, callback = function() timer:stop() end })
+	if(auto_start == false) then
+		cmd.register_commands({
+			win = nil,
+			timer = nil,
+			open_callback = function()
+				local buf = create_buffer(buf_opts)
+				local win = create_window(buf, win_opts)
+				local timer = set_schedule(buf)
+
+				cmd.refresh_cache({
+					win = win,
+					timer = timer
+				})
+			end
+		})
+	else
+		local buf = create_buffer(buf_opts)
+		local win = create_window(buf, win_opts)
+		local timer = set_schedule(buf)
+
+		cmd.register_commands({
+			win = win,
+			timer = timer,
+			open_callback = function()
+				local buf = create_buffer(buf_opts)
+				local win = create_window(buf, win_opts)
+				local timer = set_schedule(buf)
+
+				cmd.refresh_cache({
+					win = win,
+					timer = timer
+				})
+			end
+		})
+	end
 end
 
 return M
