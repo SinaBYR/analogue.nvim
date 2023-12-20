@@ -2,8 +2,9 @@ local a = vim.api
 local config = require('analogue.config')
 
 local M = {}
+M._module = {}
 
-local function reset_command(win)
+local function reset_command()
 	-- local commands = {
 	-- 	["AnalogueRestore"] = {
 	-- 		["name"] = "AnalogueRestore",
@@ -22,7 +23,7 @@ local function reset_command(win)
 	a.nvim_create_user_command(
 		'AnalogueReset',
 		function()
-			a.nvim_win_set_config(win, {
+			a.nvim_win_set_config(M._module.win, {
 				relative = 'editor',
 				row = vim.o.lines - config.constants.height,
 				col = vim.o.columns - config.constants.width,
@@ -34,12 +35,12 @@ local function reset_command(win)
 	)
 end
 
-local function close_command(win, timer)
+local function close_command()
 	a.nvim_create_user_command(
 		'AnalogueClose',
 		function()
-			timer:stop()
-			a.nvim_win_close(win, true)
+			M._module.timer:stop()
+			a.nvim_win_close(M._module.win, true)
 		end,
 		{
 			nargs = 0
@@ -47,22 +48,32 @@ local function close_command(win, timer)
 	)
 end
 
--- local function open_command(win, timer)
--- 	a.nvim_create_user_command(
--- 		'AnalogueOpen',
--- 		function()
--- 			util.open_clock()
--- 		end,
--- 		{
--- 			nargs = 0
--- 		}
--- 	)
--- end
+local function open_command(callback)
+	a.nvim_create_user_command(
+		'AnalogueOpen',
+		function()
+			M._module.open_callback()
+		end,
+		{
+			nargs = 0
+		}
+	)
+end
+
+function M.refresh_cache(props)
+	M._module.win = props.win
+	M._module.timer = props.timer
+end
 
 function M.register_commands(props)
-	reset_command(props.win)
-	close_command(props.win, props.timer)
-	-- open_command()
+	M._module = {
+		win = props.win,
+		timer = props.timer,
+		open_callback = props.open_callback
+	}
+	reset_command()
+	close_command()
+	open_command()
 end
 
 return M
