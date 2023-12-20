@@ -67,11 +67,11 @@ function M.initialize_clock(opts)
 	local buf_opts = opts.buf_opts or config.buf_opts
 	local win_opts = opts.win_opts or config.win_opts
 
-	local buffer = create_buffer(buf_opts)
-	local window = create_window(buffer, win_opts)
-	cmd.register_commands(window)
-	local timer = set_schedule(buffer)
-	a.nvim_create_autocmd('WinClosed', { buffer = buffer, callback = function() timer:stop() end })
+	local buf = create_buffer(buf_opts)
+	local win = create_window(buf, win_opts)
+	local timer = set_schedule(buf)
+	cmd.register_commands({ win = win, timer = timer })
+	-- a.nvim_create_autocmd('WinClosed', { buffer = buffer, callback = function() timer:stop() end })
 end
 
 return M

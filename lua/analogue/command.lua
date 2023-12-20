@@ -34,8 +34,22 @@ function restore_command(win)
 	)
 end
 
-function M.register_commands(win)
-	restore_command(win)
+function close_command(win, timer)
+	a.nvim_create_user_command(
+		'AnalogueClose',
+		function()
+			timer:stop()
+			a.nvim_win_close(win, true)
+		end,
+		{
+			nargs = 0
+		}
+	)
+end
+
+function M.register_commands(props)
+	restore_command(props.win)
+	close_command(props.win, props.timer)
 end
 
 return M
