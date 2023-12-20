@@ -13,9 +13,9 @@ M.buf_opts = {
 }
 
 M.win_opts = {
-	-- focusable = false,
-	-- title = 'Sina',
-	-- title_pos = 'center',
+	title = 'Analogue',
+	title_pos = 'center',
+	focusable = false,
 	relative = 'editor', -- win, editor, cursor, mouse
 	style = 'minimal', -- removes row number
 	row = vim.o.lines - height,
