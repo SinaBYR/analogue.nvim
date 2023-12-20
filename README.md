@@ -9,7 +9,7 @@ An analogue clock for neovim tui implemented purely in Lua.
 
 ## ✨ Features
 - simple and minimal design
-- 17 x 11 dimentional character box
+- 17 x 11 dimensional character box
 - flexible position (floated window)
 - clock refresh every ~3 minute
 - configurable highlights and components (hands, dials) _soon_
