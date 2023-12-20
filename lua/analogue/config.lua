@@ -1,6 +1,6 @@
 local M = {}
 
-local width = 16
+local width = 17
 local height = 11
 
 M.constants = {
