@@ -4,6 +4,8 @@ An analogue clock for neovim tui implemented purely in Lua.
 
 ![Analogue Screenshot 1](./media/ss-1.png)
 ![Analogue Screenshot 2](./media/ss-2.png)
+![Analogue Screenshot 3](./media/ss-3.png)
+![Analogue Screenshot 4](./media/ss-4.png)
 
 ## ✨ Features
 - simple and minimal design
