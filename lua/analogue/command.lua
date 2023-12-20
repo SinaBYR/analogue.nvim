@@ -3,7 +3,7 @@ local config = require('analogue.config')
 
 local M = {}
 
-function restore_command(win)
+local function reset_command(win)
 	-- local commands = {
 	-- 	["AnalogueRestore"] = {
 	-- 		["name"] = "AnalogueRestore",
@@ -20,7 +20,7 @@ function restore_command(win)
 	-- 	}
 	-- }
 	a.nvim_create_user_command(
-		'AnalogueRestore',
+		'AnalogueReset',
 		function()
 			a.nvim_win_set_config(win, {
 				relative = 'editor',
@@ -34,7 +34,7 @@ function restore_command(win)
 	)
 end
 
-function close_command(win, timer)
+local function close_command(win, timer)
 	a.nvim_create_user_command(
 		'AnalogueClose',
 		function()
@@ -47,9 +47,22 @@ function close_command(win, timer)
 	)
 end
 
+-- local function open_command(win, timer)
+-- 	a.nvim_create_user_command(
+-- 		'AnalogueOpen',
+-- 		function()
+-- 			util.open_clock()
+-- 		end,
+-- 		{
+-- 			nargs = 0
+-- 		}
+-- 	)
+-- end
+
 function M.register_commands(props)
-	restore_command(props.win)
+	reset_command(props.win)
 	close_command(props.win, props.timer)
+	-- open_command()
 end
 
 return M
