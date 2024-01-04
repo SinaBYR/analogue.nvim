@@ -56,6 +56,10 @@ local function create_window(handle, custom_opts)
 		win_opts.title_pos = nil
 	end
 
+	if custom_opts.border then
+		win_opts.border = custom_opts.border
+	end
+
 	local win = a.nvim_open_win(handle, false, win_opts)
 
 	return win
@@ -68,7 +72,8 @@ end
 function M.initialize_clock(opts)
 	M._initial_opts = opts
 	local win_custom_opts = { -- options related to window goes here
-		hide_title = opts.hide_title
+		hide_title = opts.hide_title,
+		border = opts.border,
 	}
 	local auto_start = opts.auto_start
 
