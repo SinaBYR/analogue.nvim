@@ -38,19 +38,24 @@ local function update_template(buf)
 	vim.schedule(function() a.nvim_buf_set_lines(buf, 0, -1, false, template) end)
 end
 
-local function create_buffer(opts)
-	local buf_opts = opts or config.buf_opts
+local function create_buffer()
 	local buffer = a.nvim_create_buf(false, false)
 
-	for opt, value in pairs(buf_opts) do
+	for opt, value in pairs(config.buf_opts) do
 		a.nvim_buf_set_option(buffer, opt, value)
 	end
 
 	return buffer
 end
 
-local function create_window(handle, opts)
-	local win_opts = opts or config.win_opts
+local function create_window(handle, custom_opts)
+	local win_opts = config.win_opts
+
+	if custom_opts.hide_title then
+		win_opts.title = nil
+		win_opts.title_pos = nil
+	end
+
 	local win = a.nvim_open_win(handle, false, win_opts)
 
 	return win
@@ -62,8 +67,9 @@ end
 
 function M.initialize_clock(opts)
 	M._initial_opts = opts
-	local buf_opts = opts.buf_opts or config.buf_opts
-	local win_opts = opts.win_opts or config.win_opts
+	local win_custom_opts = { -- options related to window goes here
+		hide_title = opts.hide_title
+	}
 	local auto_start = opts.auto_start
 
 	if(auto_start == false) then
@@ -71,8 +77,8 @@ function M.initialize_clock(opts)
 			win = nil,
 			timer = nil,
 			open_callback = function()
-				local buf = create_buffer(buf_opts)
-				local win = create_window(buf, win_opts)
+				local buf = create_buffer()
+				local win = create_window(buf, win_custom_opts)
 				local timer = set_schedule(buf)
 
 				cmd.refresh_cache({
@@ -82,16 +88,16 @@ function M.initialize_clock(opts)
 			end
 		})
 	else
-		local buf = create_buffer(buf_opts)
-		local win = create_window(buf, win_opts)
+		local buf = create_buffer()
+		local win = create_window(buf, win_custom_opts)
 		local timer = set_schedule(buf)
 
 		cmd.register_commands({
 			win = win,
 			timer = timer,
 			open_callback = function()
-				local buf = create_buffer(buf_opts)
-				local win = create_window(buf, win_opts)
+				local buf = create_buffer()
+				local win = create_window(buf, win_custom_opts)
 				local timer = set_schedule(buf)
 
 				cmd.refresh_cache({
