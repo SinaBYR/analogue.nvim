@@ -43,27 +43,10 @@ require("analogue").setup({
 Analogue comes with the following default configuration:
 
 ```lua
--- initializes the clock on startup
-auto_start = true,
 
--- buffer default options
-buf_opts = {
-   buftype = 'nofile'
-},
-
--- window default options
-win_opts = {
-   title = 'Analogue',
-   title_pos = 'center',
-   focusable = false,
-   relative = 'editor',
-   style = 'minimal',
-   row = vim.o.lines - height,
-   col = vim.o.columns - width,
-   width = width,                -- height = 11
-   height = height,              -- width = 16
-   border = 'single'
-}
+auto_start = true, -- initializes the clock on startup
+hide_title = false -- hides Analogue title
+border = 'rounded' -- any neovim-valid window border _(single, double, rounded, { "/", "-", "\\", "|" }, {'●'})_
 ```
 
 ## 🚀 Commands
