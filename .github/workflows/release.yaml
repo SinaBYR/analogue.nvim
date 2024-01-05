@@ -1,5 +1,3 @@
-name: release-notes
-
 on:
   push:
     branches:
@@ -9,6 +7,8 @@ permissions:
   contents: write
   pull-requests: write
 
+name: release-notes
+
 jobs:
   release:
     name: release
@@ -16,7 +16,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: google-github-actions/release-please-action@v4
-      - name: create release and update CHANGELOG.md
         id: release
         with:
           release-type: simple
@@ -31,4 +30,5 @@ jobs:
           git push origin :stable || true
           git tag -a stable -m "Last Stable Release"
           git push origin stable
+
 
