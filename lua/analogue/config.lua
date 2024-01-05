@@ -22,7 +22,7 @@ M.win_opts = {
 	col = vim.o.columns - width,
 	width = width,
 	height = height,
-	border = 'single', -- {'●'}, -- {"", "", "", ">", "", "", "", "<"} -- { "/", "-", "\\", "|" } -- { ';' } --  { ';' },
+	border = 'rounded', -- {'●'}, -- {"", "", "", ">", "", "", "", "<"} -- { "/", "-", "\\", "|" } -- { ';' } --  { ';' },
 }
 
 M.command_opts = {
