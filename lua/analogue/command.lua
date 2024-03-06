@@ -1,9 +1,23 @@
 local a = vim.api
 local config = require('analogue.config')
 
+---@class M
+---@field register_commands function as the name implies it registers custom commands and makes them available
+---@field refresh_cache function it updates values of properties in `_module` table
+---@field _module _Module
+
+---@class _Module
+---@field win? integer id of the window analogue is loaded in
+---@field timer? uv_timer_t interval timer instance initialized on Analogue startup
+---@field open_callback? function callback function which is called on Analogue startup (initializes window, buffer, timer and refreshes command module cache)
+
+---@class M
 local M = {}
+
 M._module = {}
 
+-- Creates `:AnalogueReset` custom command.
+---@return nil
 local function reset_command()
 	-- local commands = {
 	-- 	["AnalogueRestore"] = {
@@ -35,6 +49,8 @@ local function reset_command()
 	)
 end
 
+-- Creates `:AnalogueClose` custom command.
+---@return nil
 local function close_command()
 	a.nvim_create_user_command(
 		'AnalogueClose',
@@ -48,7 +64,9 @@ local function close_command()
 	)
 end
 
-local function open_command(callback)
+-- Creates `:AnalogueOpen` custom command.
+---@return nil
+local function open_command()
 	a.nvim_create_user_command(
 		'AnalogueOpen',
 		function()
@@ -60,11 +78,26 @@ local function open_command(callback)
 	)
 end
 
+---@class RefreshCacheProps
+---@field win integer new id of the window
+---@field timer uv_timer_t new interval timer instance
+
+-- Updates values of properties in `_module` table.
+--- @param props RefreshCacheProps
+--- @return nil
 function M.refresh_cache(props)
 	M._module.win = props.win
 	M._module.timer = props.timer
 end
 
+---@class RegisterCommandsProps
+---@field win integer id of the window
+---@field timer uv_timer_t interval timer instance
+---@field open_callback function callback function which is called on Analogue startup
+
+-- Registers custom commands after initialization of Analogue.
+--- @param props RegisterCommandsProps
+--- @return nil
 function M.register_commands(props)
 	M._module = {
 		win = props.win,
