@@ -1,19 +1,12 @@
 local a = vim.api
 local config = require('analogue.config')
 
----@class M
----@field register_commands function as the name implies it registers custom commands and makes them available
----@field refresh_cache function it updates values of properties in `_module` table
----@field _module _Module
+local M = {}
 
 ---@class _Module
 ---@field win? integer id of the window analogue is loaded in
 ---@field timer? uv_timer_t interval timer instance initialized on Analogue startup
----@field open_callback? function callback function which is called on Analogue startup (initializes window, buffer, timer and refreshes command module cache)
-
----@class M
-local M = {}
-
+---@field open_handler? function function called on Analogue startup (initializes window, buffer, timer and refreshes command module cache)
 M._module = {}
 
 -- Creates `:AnalogueReset` custom command.
@@ -70,7 +63,7 @@ local function open_command()
 	a.nvim_create_user_command(
 		'AnalogueOpen',
 		function()
-			M._module.open_callback()
+			M._module.open_handler()
 		end,
 		{
 			nargs = 0
@@ -91,9 +84,9 @@ function M.refresh_cache(props)
 end
 
 ---@class RegisterCommandsProps
----@field win integer id of the window
----@field timer uv_timer_t interval timer instance
----@field open_callback function callback function which is called on Analogue startup
+---@field win? integer id of the window
+---@field timer? uv_timer_t interval timer instance
+---@field open_handler function function called on Analogue startup
 
 -- Registers custom commands after initialization of Analogue.
 --- @param props RegisterCommandsProps
@@ -102,7 +95,7 @@ function M.register_commands(props)
 	M._module = {
 		win = props.win,
 		timer = props.timer,
-		open_callback = props.open_callback
+		open_handler = props.open_handler
 	}
 	reset_command()
 	close_command()
