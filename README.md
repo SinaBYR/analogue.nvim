@@ -56,7 +56,7 @@ Analogue comes with the following commands:
 
 - `AnalogueOpen`: initialize and display the clock
 - `AnalogueClose`: destroy the clock and clean up
-- `AnalogueRefresh`: refresh the clock position to bottom-right corner _(complete_ _positions_ _soon)_
+- `AnalogueReset`: reset the clock position to bottom-right corner _(complete_ _positions_ _soon)_
 - `AnalogueHide`: hide the clock _(soon)_
 - `AnaloguePosition [pos]`: set the clock position to `pos` _(soon)_
 
