@@ -1,5 +1,6 @@
 local a = vim.api
 local config = require('analogue.config')
+local util = require('analogue.util')
 
 local M = {}
 
@@ -8,6 +9,29 @@ local M = {}
 ---@field timer? uv_timer_t interval timer instance initialized on Analogue startup
 ---@field open_handler? function function called on Analogue startup (initializes window, buffer, timer and refreshes command module cache)
 M._module = {}
+
+-- Creates `:AnaloguePosition {pos}` custom command.
+-- Values for `{pos}` can be `bottom-right`, `bottom-left`, `top-right`, or `top-left`.
+---@return nil
+local function position_command()
+	a.nvim_create_user_command(
+		'AnaloguePosition',
+		function(props)
+			if util.includes(config.win_positions, props.args) then
+				a.nvim_win_set_config(M._module.win, {
+					relative = 'editor',
+					row = config.win_positions[props.args].row,
+					col = config.win_positions[props.args].col,
+				})
+			else
+				a.nvim_err_writeln("Unknown position value")
+			end
+		end,
+		{
+			nargs = 1
+		}
+	)
+end
 
 -- Creates `:AnalogueReset` custom command.
 ---@return nil
@@ -100,6 +124,7 @@ function M.register_commands(props)
 	reset_command()
 	close_command()
 	open_command()
+	position_command()
 end
 
 return M
