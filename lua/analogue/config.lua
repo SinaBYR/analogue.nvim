@@ -3,6 +3,25 @@ local M = {}
 local width = 17
 local height = 11
 
+M.win_positions = {
+	["bottom-right"] = {
+		row = vim.o.lines - height,
+		col = vim.o.columns - width,
+	},
+	["bottom-left"] = {
+		row = vim.o.lines - height,
+		col = 1,
+	},
+	["top-right"] = {
+		row = 1,
+		col = vim.o.columns - width,
+	},
+	["top-left"] = {
+		row = 1,
+		col = 1,
+	}
+}
+
 M.constants = {
 	width = width,
 	height = height
