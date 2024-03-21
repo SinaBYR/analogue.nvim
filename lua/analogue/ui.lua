@@ -107,48 +107,41 @@ end
 ---@param opts PluginOptions User configuration options
 ---@return nil
 function M.initialize_clock(opts)
-	local custom_win_opts = {
+	local initial_win_opts = {
 		hide_title = opts.hide_title,
 		border = opts.border,
 		fixed_position = opts.fixed_position
 	}
 	local auto_start = opts.auto_start
 
+	local function open_handler()
+		local buf = create_buffer()
+		local win = create_window(buf, initial_win_opts)
+		local timer = set_schedule(buf)
+
+		cmd.refresh_cache({
+			win = win,
+			timer = timer
+		})
+	end
+
 	if(auto_start == false) then
 		cmd.register_commands({
 			win = nil,
 			timer = nil,
-			fixed_position = custom_win_opts.fixed_position,
-			open_handler = function()
-				local buf = create_buffer()
-				local win = create_window(buf, custom_win_opts)
-				local timer = set_schedule(buf)
-
-				cmd.refresh_cache({
-					win = win,
-					timer = timer
-				})
-			end
+			fixed_position = initial_win_opts.fixed_position,
+			open_handler
 		})
 	else
 		local buf = create_buffer()
-		local win = create_window(buf, custom_win_opts)
+		local win = create_window(buf, initial_win_opts)
 		local timer = set_schedule(buf)
 
 		cmd.register_commands({
 			win = win,
 			timer = timer,
-			fixed_position = custom_win_opts.fixed_position,
-			open_handler = function()
-				local buf = create_buffer()
-				local win = create_window(buf, custom_win_opts)
-				local timer = set_schedule(buf)
-
-				cmd.refresh_cache({
-					win = win,
-					timer = timer
-				})
-			end
+			fixed_position = initial_win_opts.fixed_position,
+			open_handler
 		})
 	end
 end
