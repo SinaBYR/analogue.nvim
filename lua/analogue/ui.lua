@@ -9,6 +9,7 @@ local cmd = require('analogue.command')
 ---@field auto_start boolean If true, it runs on neovim startup. default is `true`.
 ---@field hide_title boolean If true, hides the title on the clock. default is `false`.
 ---@field border string Sets border around the clock. default is `rounded`.
+---@field fixed_position FixedPosition
 
 local M = {}
 -- M._initial_opts = {}
@@ -64,6 +65,7 @@ end
 ---@field hide_title boolean If true hides the title on the clock. default is `false`.
 --TODO create abstracted border values (Possible values: none, normal, rounded, custom, ...)
 ---@field border string Sets border around the clock. default is `rounded`.
+---@field fixed_position FixedPosition
 
 --Opens an empty new neovim window, sets its options and returns the window handle.
 ---@param handle integer Buffer handle to open in the window
@@ -79,6 +81,14 @@ local function create_window(handle, opts)
 
 	if opts.border then
 		win_opts.border = opts.border
+	end
+
+	if opts.fixed_position then
+		win_opts.row = config.win_positions[opts.fixed_position].row
+		win_opts.col = config.win_positions[opts.fixed_position].col
+	else
+		win_opts.row = config.win_positions["bottom-right"].row
+		win_opts.col = config.win_positions["bottom-right"].col
 	end
 
 	local win = a.nvim_open_win(handle, false, win_opts)
@@ -97,10 +107,10 @@ end
 ---@param opts PluginOptions User configuration options
 ---@return nil
 function M.initialize_clock(opts)
-	-- M._initial_opts = opts
 	local custom_win_opts = {
 		hide_title = opts.hide_title,
 		border = opts.border,
+		fixed_position = opts.fixed_position
 	}
 	local auto_start = opts.auto_start
 
@@ -108,6 +118,7 @@ function M.initialize_clock(opts)
 		cmd.register_commands({
 			win = nil,
 			timer = nil,
+			fixed_position = custom_win_opts.fixed_position,
 			open_handler = function()
 				local buf = create_buffer()
 				local win = create_window(buf, custom_win_opts)
@@ -127,6 +138,7 @@ function M.initialize_clock(opts)
 		cmd.register_commands({
 			win = win,
 			timer = timer,
+			fixed_position = custom_win_opts.fixed_position,
 			open_handler = function()
 				local buf = create_buffer()
 				local win = create_window(buf, custom_win_opts)
