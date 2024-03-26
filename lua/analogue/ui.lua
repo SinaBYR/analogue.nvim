@@ -84,8 +84,9 @@ local function create_window(handle, opts)
 	end
 
 	if opts.fixed_position then
-		win_opts.row = config.win_positions[opts.fixed_position].row
-		win_opts.col = config.win_positions[opts.fixed_position].col
+		local pos = config.get_win_position(opts.fixed_position)
+		win_opts.row = pos.row
+		win_opts.col = pos.col
 	else
 		win_opts.row = config.win_positions["bottom-right"].row
 		win_opts.col = config.win_positions["bottom-right"].col
@@ -130,7 +131,7 @@ function M.initialize_clock(opts)
 			win = nil,
 			timer = nil,
 			fixed_position = initial_win_opts.fixed_position,
-			open_handler
+			open_handler = open_handler
 		})
 	else
 		local buf = create_buffer()
@@ -141,7 +142,7 @@ function M.initialize_clock(opts)
 			win = win,
 			timer = timer,
 			fixed_position = initial_win_opts.fixed_position,
-			open_handler
+			open_handler = open_handler
 		})
 	end
 end
