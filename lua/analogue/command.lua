@@ -44,10 +44,11 @@ local function reset_command()
 	a.nvim_create_user_command(
 		'AnalogueReset',
 		function()
+			local pos = config.get_win_position(M._module.fixed_position)
 			a.nvim_win_set_config(M._module.win, {
 				relative = 'editor',
-				row = vim.o.lines - config.constants.height,
-				col = vim.o.columns - config.constants.width,
+				row = pos.row,
+				col = pos.col,
 			})
 		end,
 		{
