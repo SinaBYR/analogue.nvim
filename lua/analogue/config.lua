@@ -3,6 +3,37 @@ local M = {}
 local width = 17
 local height = 11
 
+---@param pos string
+---@return table
+function M.get_win_position(pos)
+	if pos == "bottom-right" then
+		return {
+			row = vim.o.lines - height,
+			col = vim.o.columns - width,
+		}
+	elseif pos == "bottom-left" then
+		return {
+			row = vim.o.lines - height,
+			col = 1,
+		}
+	elseif pos == "top-right" then
+		return {
+			row = 1,
+			col = vim.o.columns - width,
+		}
+	elseif pos == "top-left" then
+		return {
+			row = 1,
+			col = 1,
+		}
+	else -- defaults to bottom-right
+		return {
+			row = vim.o.lines - height,
+			col = vim.o.columns - width,
+		}
+	end
+end
+
 M.constants = {
 	width = width,
 	height = height

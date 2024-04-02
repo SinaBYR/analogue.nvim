@@ -2,6 +2,23 @@
 
 local M = {}
 
+--Returns true if record contains a property with provided key
+---@param record table A table with keys of type string
+---@param key string Key to check for its presence
+---@return boolean
+function M.includes(record, key)
+	local contains = false
+
+	for k in pairs(record) do
+		if k == key then
+			contains = true
+			break
+		end
+	end
+
+	return contains
+end
+
 function M.print_table(table)
 	vim.print(table)
 end
