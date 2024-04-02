@@ -43,7 +43,7 @@ require("analogue").setup({
 Analogue comes with the following default configuration:
 
 ```lua
-
+fixed_position = 'bottom-right' -- valid options are: "bottom-right", "bottom-left", "top-right", "top-left"
 auto_start = true, -- initializes the clock on startup
 hide_title = false -- hides Analogue title
 border = 'rounded' -- any neovim-valid window border _(single, double, rounded, { "/", "-", "\\", "|" }, {'●'})_
@@ -56,11 +56,11 @@ Analogue comes with the following commands:
 
 - `AnalogueOpen`: initialize and display the clock
 - `AnalogueClose`: destroy the clock and clean up
-- `AnalogueReset`: reset the clock position to bottom-right corner _(complete_ _positions_ _soon)_
+- `AnalogueReset`: reset the clock position to preset `fixed_position`
 - `AnalogueHide`: hide the clock _(soon)_
 - `AnaloguePosition [pos]`: set the clock position to `pos` _(soon)_
 
-> 💡 if `auto_start` is set to false, then clock can be initialized with `AnalogueOpen` command
+> 💡 if `auto_start` is set to false, then clock can be later initialized with `AnalogueOpen` command
 
 
 ### API
