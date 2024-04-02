@@ -34,6 +34,13 @@ function M.get_win_position(pos)
 	end
 end
 
+M.win_fixed_positions_keys = {
+	"bottom-right",
+	"bottom-left",
+	"top-right",
+	"top-left",
+}
+
 M.constants = {
 	width = width,
 	height = height
