@@ -54,6 +54,7 @@ local function position_command()
 			if util.includes(config.win_fixed_positions_keys, props.args, true) then
 				local pos = config.get_win_position(props.args)
 				M._module.fixed_position = props.args
+				M._module.adjusted_position = { x = pos.col, y = pos.row }
 				a.nvim_win_set_config(M._module.win, {
 					relative = 'editor',
 					row = pos.row,
@@ -76,11 +77,10 @@ local function reset_command()
 		'AnalogueReset',
 		function()
 			local pos = config.get_win_position(M._module.fixed_position)
-			M._module.adjusted_position.x = pos.col
 			a.nvim_win_set_config(M._module.win, {
 				relative = 'editor',
 				row = pos.row,
-				col = pos.col,
+				col = M._module.adjusted_position.x
 			})
 		end,
 		{
