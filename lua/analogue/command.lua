@@ -6,12 +6,43 @@ local M = {}
 
 ---@alias FixedPosition "bottom-right"|"bottom-left"|"top-right"|"top-left"
 
+---@class AdjustedPosition
+---@field x? number
+---@field y? number
+
 ---@class _Module
 ---@field win? integer id of the window analogue is loaded in
 ---@field timer? uv_timer_t interval timer instance initialized on Analogue startup
 ---@field open_handler? function function called on Analogue startup (initializes window, buffer, timer and refreshes command module cache)
----@field fixed_position? FixedPosition fixed position of floating window
+---@field fixed_position? FixedPosition fixed position of the clock
+---@field adjusted_position? AdjustedPosition user-adjusted exact position of the clock
 M._module = {}
+
+-- Creates `:AnaloguePositionX {num}` custom command.
+-- Argument `{num}` must be a number.
+---@return nil
+local function position_x_command()
+	a.nvim_create_user_command(
+		'AnaloguePositionX',
+		function(props)
+			local inputX = tonumber(props.args)
+			if inputX == nil then
+				a.nvim_err_writeln("Argument must be number")
+			else
+				local pos = config.get_win_position(M._module.fixed_position)
+				M._module.adjusted_position.x = M._module.adjusted_position.x + inputX
+				a.nvim_win_set_config(M._module.win, {
+					relative = 'editor',
+					row = pos.row,
+					col = M._module.adjusted_position.x
+				})
+			end
+		end,
+		{
+			nargs = 1
+		}
+	)
+end
 
 -- Creates `:AnaloguePosition {pos}` custom command.
 -- Values for `{pos}` can be `bottom-right`, `bottom-left`, `top-right`, or `top-left`.
@@ -45,6 +76,7 @@ local function reset_command()
 		'AnalogueReset',
 		function()
 			local pos = config.get_win_position(M._module.fixed_position)
+			M._module.adjusted_position.x = pos.col
 			a.nvim_win_set_config(M._module.win, {
 				relative = 'editor',
 				row = pos.row,
@@ -112,12 +144,17 @@ function M.register_commands(props)
 		win = props.win,
 		timer = props.timer,
 		open_handler = props.open_handler,
-		fixed_position = props.fixed_position
+		fixed_position = props.fixed_position,
+		adjusted_position = {
+			x = config.get_win_position(props.fixed_position).col,
+			y = config.get_win_position(props.fixed_position).row,
+		}
 	}
 	reset_command()
 	close_command()
 	open_command()
 	position_command()
+	position_x_command()
 end
 
 return M
