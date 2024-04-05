@@ -10,7 +10,7 @@ An analogue clock for neovim tui implemented purely in Lua.
 ## ✨ Features
 - simple and minimal design
 - 17 x 11 dimensional character box
-- flexible position (floated window)
+- highly flexible position (floated window)
 - clock refresh every ~3 minute
 - configurable highlights and components (hands, dials) _soon_
 
@@ -44,6 +44,10 @@ Analogue comes with the following default configuration:
 
 ```lua
 fixed_position = 'bottom-right' -- valid options are: "bottom-right", "bottom-left", "top-right", "top-left"
+adjusted_position = { -- user customized position of the clock (it's applied after fixed_position)
+    x = 0,
+    y = 0,
+}
 auto_start = true, -- initializes the clock on startup
 hide_title = false -- hides Analogue title
 border = 'rounded' -- any neovim-valid window border _(single, double, rounded, { "/", "-", "\\", "|" }, {'●'})_
@@ -56,9 +60,11 @@ Analogue comes with the following commands:
 
 - `AnalogueOpen`: initialize and display the clock
 - `AnalogueClose`: destroy the clock and clean up
-- `AnalogueReset`: reset the clock position to preset `fixed_position`
+- `AnalogueReset`: reset the clock position to preset `fixed_position` + `adjusted_position`
+- `AnaloguePosition [pos]`: set the clock position to `pos`
+- `AnaloguePositionX [num]`: move the clock `num` units on x-axis (_negative values are supported_)
+- `AnaloguePositionY [num]`: move the clock `num` units on y-axis (_negative values are supported_)
 - `AnalogueHide`: hide the clock _(soon)_
-- `AnaloguePosition [pos]`: set the clock position to `pos` _(soon)_
 
 > 💡 if `auto_start` is set to false, then clock can be later initialized with `AnalogueOpen` command
 
