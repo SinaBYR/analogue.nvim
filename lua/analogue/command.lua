@@ -6,12 +6,69 @@ local M = {}
 
 ---@alias FixedPosition "bottom-right"|"bottom-left"|"top-right"|"top-left"
 
+---@class AdjustedPosition
+---@field x? number
+---@field y? number
+
 ---@class _Module
 ---@field win? integer id of the window analogue is loaded in
 ---@field timer? uv_timer_t interval timer instance initialized on Analogue startup
 ---@field open_handler? function function called on Analogue startup (initializes window, buffer, timer and refreshes command module cache)
----@field fixed_position? FixedPosition fixed position of floating window
+---@field fixed_position? FixedPosition fixed position of the clock
+---@field adjusted_position? AdjustedPosition user-adjusted exact position of the clock
 M._module = {}
+
+-- Creates `:AnaloguePositionY {num}` custom command.
+-- Argument `{num}` must be a number.
+---@return nil
+local function position_y_command()
+	a.nvim_create_user_command(
+		'AnaloguePositionY',
+		function(props)
+			local inputY = tonumber(props.args)
+			if inputY == nil then
+				a.nvim_err_writeln("Argument must be number")
+			else
+				local pos = config.get_win_position(M._module.fixed_position)
+				M._module.adjusted_position.y = M._module.adjusted_position.y + inputY
+				a.nvim_win_set_config(M._module.win, {
+					relative = 'editor',
+					row = M._module.adjusted_position.y,
+					col = pos.col,
+				})
+			end
+		end,
+		{
+			nargs = 1
+		}
+	)
+end
+
+-- Creates `:AnaloguePositionX {num}` custom command.
+-- Argument `{num}` must be a number.
+---@return nil
+local function position_x_command()
+	a.nvim_create_user_command(
+		'AnaloguePositionX',
+		function(props)
+			local inputX = tonumber(props.args)
+			if inputX == nil then
+				a.nvim_err_writeln("Argument must be number")
+			else
+				local pos = config.get_win_position(M._module.fixed_position)
+				M._module.adjusted_position.x = M._module.adjusted_position.x + inputX
+				a.nvim_win_set_config(M._module.win, {
+					relative = 'editor',
+					row = pos.row,
+					col = M._module.adjusted_position.x
+				})
+			end
+		end,
+		{
+			nargs = 1
+		}
+	)
+end
 
 -- Creates `:AnaloguePosition {pos}` custom command.
 -- Values for `{pos}` can be `bottom-right`, `bottom-left`, `top-right`, or `top-left`.
@@ -20,13 +77,14 @@ local function position_command()
 	a.nvim_create_user_command(
 		'AnaloguePosition',
 		function(props)
-			if util.includes(config.win_positions, props.args) then
-				M._module.fixed_position = props.args -- update cache for reset command to function
-
+			if util.includes(config.win_fixed_positions_keys, props.args, true) then
+				local pos = config.get_win_position(props.args)
+				M._module.fixed_position = props.args
+				M._module.adjusted_position = { x = pos.col, y = pos.row }
 				a.nvim_win_set_config(M._module.win, {
 					relative = 'editor',
-					row = config.win_positions[props.args].row,
-					col = config.win_positions[props.args].col,
+					row = pos.row,
+					col = pos.col,
 				})
 			else
 				a.nvim_err_writeln("Unknown position value")
@@ -48,7 +106,7 @@ local function reset_command()
 			a.nvim_win_set_config(M._module.win, {
 				relative = 'editor',
 				row = pos.row,
-				col = pos.col,
+				col = M._module.adjusted_position.x
 			})
 		end,
 		{
@@ -112,12 +170,18 @@ function M.register_commands(props)
 		win = props.win,
 		timer = props.timer,
 		open_handler = props.open_handler,
-		fixed_position = props.fixed_position
+		fixed_position = props.fixed_position,
+		adjusted_position = {
+			x = config.get_win_position(props.fixed_position).col,
+			y = config.get_win_position(props.fixed_position).row,
+		}
 	}
 	reset_command()
 	close_command()
 	open_command()
 	position_command()
+	position_x_command()
+	position_y_command()
 end
 
 return M

@@ -2,17 +2,28 @@
 
 local M = {}
 
---Returns true if record contains a property with provided key
----@param record table A table with keys of type string
----@param key string Key to check for its presence
+--Returns true if table contains a key/value with provided string value.
+--If `isArray` is true table is considered an array so array items are checked. Otherwise it's considered an object-like table and its keys are checked.
+---@param table table A table with keys of type string
+---@param value string Value to check for its presence
+---@param isArray boolean 
 ---@return boolean
-function M.includes(record, key)
+function M.includes(table, value, isArray)
 	local contains = false
 
-	for k in pairs(record) do
-		if k == key then
-			contains = true
-			break
+	if isArray then
+		for _, v in pairs(table) do
+			if v == value then
+				contains = true
+				break
+			end
+		end
+	else
+		for k in pairs(table) do
+			if k == value then
+				contains = true
+				break
+			end
 		end
 	end
 

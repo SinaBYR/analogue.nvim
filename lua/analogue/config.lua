@@ -6,14 +6,15 @@ local height = 11
 ---@param pos string
 ---@return table
 function M.get_win_position(pos)
+	-- heigt_of_the_lualine = 4
 	if pos == "bottom-right" then
 		return {
-			row = vim.o.lines - height,
+			row = vim.o.lines - height - 4,
 			col = vim.o.columns - width,
 		}
 	elseif pos == "bottom-left" then
 		return {
-			row = vim.o.lines - height,
+			row = vim.o.lines - height - 4,
 			col = 1,
 		}
 	elseif pos == "top-right" then
@@ -28,11 +29,18 @@ function M.get_win_position(pos)
 		}
 	else -- defaults to bottom-right
 		return {
-			row = vim.o.lines - height,
+			row = vim.o.lines - height - 4,
 			col = vim.o.columns - width,
 		}
 	end
 end
+
+M.win_fixed_positions_keys = {
+	"bottom-right",
+	"bottom-left",
+	"top-right",
+	"top-left",
+}
 
 M.constants = {
 	width = width,
