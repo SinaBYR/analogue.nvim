@@ -18,6 +18,32 @@ local M = {}
 ---@field adjusted_position? AdjustedPosition user-adjusted exact position of the clock
 M._module = {}
 
+-- Creates `:AnaloguePositionY {num}` custom command.
+-- Argument `{num}` must be a number.
+---@return nil
+local function position_y_command()
+	a.nvim_create_user_command(
+		'AnaloguePositionY',
+		function(props)
+			local inputY = tonumber(props.args)
+			if inputY == nil then
+				a.nvim_err_writeln("Argument must be number")
+			else
+				local pos = config.get_win_position(M._module.fixed_position)
+				M._module.adjusted_position.y = M._module.adjusted_position.y + inputY
+				a.nvim_win_set_config(M._module.win, {
+					relative = 'editor',
+					row = M._module.adjusted_position.y,
+					col = pos.col,
+				})
+			end
+		end,
+		{
+			nargs = 1
+		}
+	)
+end
+
 -- Creates `:AnaloguePositionX {num}` custom command.
 -- Argument `{num}` must be a number.
 ---@return nil
@@ -155,6 +181,7 @@ function M.register_commands(props)
 	open_command()
 	position_command()
 	position_x_command()
+	position_y_command()
 end
 
 return M
