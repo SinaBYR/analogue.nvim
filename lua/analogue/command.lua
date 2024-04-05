@@ -29,12 +29,11 @@ local function position_y_command()
 			if inputY == nil then
 				a.nvim_err_writeln("Argument must be number")
 			else
-				local pos = config.get_win_position(M._module.fixed_position)
 				M._module.adjusted_position.y = M._module.adjusted_position.y + inputY
 				a.nvim_win_set_config(M._module.win, {
 					relative = 'editor',
 					row = M._module.adjusted_position.y,
-					col = pos.col,
+					col = M._module.adjusted_position.x,
 				})
 			end
 		end,
@@ -55,11 +54,10 @@ local function position_x_command()
 			if inputX == nil then
 				a.nvim_err_writeln("Argument must be number")
 			else
-				local pos = config.get_win_position(M._module.fixed_position)
 				M._module.adjusted_position.x = M._module.adjusted_position.x + inputX
 				a.nvim_win_set_config(M._module.win, {
 					relative = 'editor',
-					row = pos.row,
+					row = M._module.adjusted_position.y,
 					col = M._module.adjusted_position.x
 				})
 			end
@@ -177,6 +175,19 @@ function M.register_commands(props)
 			y = config.get_win_position(props.fixed_position).row,
 		}
 	}
+
+	if props.adjusted_position == nil then
+		M._module.adjusted_position = {
+			x = config.get_win_position(props.fixed_position).col,
+			y = config.get_win_position(props.fixed_position).row,
+		}
+	else
+		M._module.adjusted_position = {
+			x = props.adjusted_position.x + config.get_win_position(props.fixed_position).col,
+			y = props.adjusted_position.y + config.get_win_position(props.fixed_position).row,
+		}
+	end
+
 	reset_command()
 	close_command()
 	open_command()
