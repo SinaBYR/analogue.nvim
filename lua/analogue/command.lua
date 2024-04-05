@@ -161,6 +161,7 @@ end
 ---@field timer? uv_timer_t interval timer instance
 ---@field open_handler function function called on Analogue startup
 ---@field fixed_position FixedPosition fixed position of floating window
+---@field adjusted_position? AdjustedPosition user-adjusted exact position of the clock
 
 -- Registers custom commands after initialization of Analogue.
 --- @param props RegisterCommandsProps

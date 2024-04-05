@@ -10,6 +10,7 @@ local cmd = require('analogue.command')
 ---@field hide_title boolean If true, hides the title on the clock. default is `false`.
 ---@field border string Sets border around the clock. default is `rounded`.
 ---@field fixed_position FixedPosition
+---@field adjusted_position AdjustedPosition
 
 local M = {}
 -- M._initial_opts = {}
@@ -66,6 +67,7 @@ end
 --TODO create abstracted border values (Possible values: none, normal, rounded, custom, ...)
 ---@field border string Sets border around the clock. default is `rounded`.
 ---@field fixed_position FixedPosition
+---@field adjusted_position AdjustedPosition
 
 --Opens an empty new neovim window, sets its options and returns the window handle.
 ---@param handle integer Buffer handle to open in the window
@@ -83,13 +85,24 @@ local function create_window(handle, opts)
 		win_opts.border = opts.border
 	end
 
-	if opts.fixed_position then
-		local pos = config.get_win_position(opts.fixed_position)
-		win_opts.row = pos.row
-		win_opts.col = pos.col
+	if opts.adjusted_position == nil then
+		if opts.fixed_position then
+			local pos = config.get_win_position(opts.fixed_position)
+			win_opts.row = pos.row
+			win_opts.col = pos.col
+		else
+			win_opts.row = config.get_win_position("bottom-right").row
+			win_opts.col = config.get_win_position("bottom-right").col
+		end
 	else
-		win_opts.row = config.win_positions["bottom-right"].row
-		win_opts.col = config.win_positions["bottom-right"].col
+		if opts.fixed_position then
+			local pos = config.get_win_position(opts.fixed_position)
+			win_opts.row = pos.row + opts.adjusted_position.y
+			win_opts.col = pos.col + opts.adjusted_position.x
+		else
+			win_opts.row = config.get_win_position("bottom-right").row + opts.adjusted_position.y
+			win_opts.col = config.get_win_position("bottom-right").col + opts.adjusted_position.x
+		end
 	end
 
 	local win = a.nvim_open_win(handle, false, win_opts)
@@ -111,7 +124,8 @@ function M.initialize_clock(opts)
 	local initial_win_opts = {
 		hide_title = opts.hide_title,
 		border = opts.border,
-		fixed_position = opts.fixed_position
+		fixed_position = opts.fixed_position,
+		adjusted_position = opts.adjusted_position,
 	}
 	local auto_start = opts.auto_start
 
@@ -131,6 +145,7 @@ function M.initialize_clock(opts)
 			win = nil,
 			timer = nil,
 			fixed_position = initial_win_opts.fixed_position,
+			adjusted_position = initial_win_opts.adjusted_position,
 			open_handler = open_handler
 		})
 	else
@@ -142,6 +157,7 @@ function M.initialize_clock(opts)
 			win = win,
 			timer = timer,
 			fixed_position = initial_win_opts.fixed_position,
+			adjusted_position = initial_win_opts.adjusted_position,
 			open_handler = open_handler
 		})
 	end
