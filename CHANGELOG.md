@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/SinaBYR/analogue.nvim/compare/v1.1.0...v1.1.1) (2024-04-06)
+
+
+### Bug Fixes
+
+* store user passed adjusted position in command cache ([d58fd0d](https://github.com/SinaBYR/analogue.nvim/commit/d58fd0d28db5920267abc404e24c5d4f99c409de))
+
 ## [1.1.0](https://github.com/SinaBYR/analogue.nvim/compare/v1.0.1...v1.1.0) (2024-04-05)
 
 
