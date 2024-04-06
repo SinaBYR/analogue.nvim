@@ -27,7 +27,7 @@ local function position_y_command()
 		function(props)
 			local inputY = tonumber(props.args)
 			if inputY == nil then
-				a.nvim_err_writeln("Argument must be number")
+				a.nvim_err_writeln("Argument must be number!")
 			else
 				M._module.adjusted_position.y = M._module.adjusted_position.y + inputY
 				a.nvim_win_set_config(M._module.win, {
@@ -52,7 +52,7 @@ local function position_x_command()
 		function(props)
 			local inputX = tonumber(props.args)
 			if inputX == nil then
-				a.nvim_err_writeln("Argument must be number")
+				a.nvim_err_writeln("Argument must be number!")
 			else
 				M._module.adjusted_position.x = M._module.adjusted_position.x + inputX
 				a.nvim_win_set_config(M._module.win, {
@@ -85,7 +85,7 @@ local function position_command()
 					col = pos.col,
 				})
 			else
-				a.nvim_err_writeln("Unknown position value")
+				a.nvim_err_writeln("Unknown position value!")
 			end
 		end,
 		{
@@ -119,8 +119,14 @@ local function close_command()
 	a.nvim_create_user_command(
 		'AnalogueClose',
 		function()
-			M._module.timer:stop()
-			a.nvim_win_close(M._module.win, true)
+			if M._module.win == nil then
+				a.nvim_err_writeln("Analogue instance not running!")
+			else
+				M._module.timer:stop()
+				a.nvim_win_close(M._module.win, true)
+				M._module.win = nil
+				M._module.timer = nil
+			end
 		end,
 		{
 			nargs = 0
@@ -134,7 +140,11 @@ local function open_command()
 	a.nvim_create_user_command(
 		'AnalogueOpen',
 		function()
-			M._module.open_handler()
+			if M._module.win == nil then
+				M._module.open_handler()
+			else
+				a.nvim_err_writeln("Analogue already instantiated!")
+			end
 		end,
 		{
 			nargs = 0
