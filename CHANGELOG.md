@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/SinaBYR/analogue.nvim/compare/v1.1.1...v1.1.2) (2024-04-06)
+
+
+### Bug Fixes
+
+* prevent user from opening more than one instances ([cd68b3e](https://github.com/SinaBYR/analogue.nvim/commit/cd68b3e85d0845c12c0b7d3e5360c1afe9b7f571))
+
 ## [1.1.1](https://github.com/SinaBYR/analogue.nvim/compare/v1.1.0...v1.1.1) (2024-04-06)
 
 
